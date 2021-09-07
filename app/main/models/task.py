@@ -2,11 +2,22 @@ from datetime import datetime
 from flask import Flask
 from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, DateTime, BigInteger, Numeric
 from sqlalchemy.orm import relationship, declarative_base
+
+from sqlalchemy.orm import scoped_session, sessionmaker
+
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 
+from ..util.db_module import DatabaseModule
+
+engine = DatabaseModule.provide_sqlite_connection
+
 app = Flask(__name__)
+db_session = scoped_session(sessionmaker(autocommit=False,
+                                         autoflush=False,
+                                         bind=engine))
 Base = declarative_base()
+Base.query = db_session.query_property()
 
 
 # ProjectTask model
@@ -35,14 +46,14 @@ class ProjectTask(Base):
     IsEngineeringMilestone = Column(Boolean, default=0, nullable=False)
     Duration = Column(Integer, nullable=True)
 
-    AssignedUserIDFk = relationship("AssignedUserID", backref="AssignedUser_ID")
-    ProjectIDFk = relationship("ProjectID", backref="Project_ID")
-    ProjectZoneIDFk = relationship("ProjectZoneID", backref="Project_Zone_ID")
-    ProjectDivisionIDFk = relationship("ProjectDivisionID", backref="Project_Division_ID")
-    ParentProjectTaskIDFk = relationship("ParentProjectTaskID", backref="Parent_Project_Task_ID")
-    PriorityIDFk = relationship("PriorityID", backref="Priority_ID")
-    TransactionHeaderIDFk = relationship("TransactionHeaderID", backref="transaction_header_id")
-    StatusIDFk = relationship("StatusID", backref="Status_ID")
+    # AssignedUserIDFk = relationship("AssignedUserID", backref="AssignedUser_ID")
+    # ProjectIDFk = relationship("ProjectID", backref="Project_ID")
+    # ProjectZoneIDFk = relationship("ProjectZoneID", backref="Project_Zone_ID")
+    # ProjectDivisionIDFk = relationship("ProjectDivisionID", backref="Project_Division_ID")
+    # ParentProjectTaskIDFk = relationship("ParentProjectTaskID", backref="Parent_Project_Task_ID")
+    # PriorityIDFk = relationship("PriorityID", backref="Priority_ID")
+    # TransactionHeaderIDFk = relationship("TransactionHeaderID", backref="transaction_header_id")
+    # StatusIDFk = relationship("StatusID", backref="Status_ID")
 
 
 if __name__ == "__main__":
